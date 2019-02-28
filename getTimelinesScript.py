@@ -12,22 +12,31 @@ client = UserClient(CONSUMER_KEY,
                     ACCESS_TOKEN,
                     ACCESS_SECRET)
 
+
 def getFollowTimelines(screen_name, file_name, follow, ids=None, num=1):
     
-    
-    if((follow != 'followers') & (follow != 'following')):
-        return 'followers? following?'
+    if((follow != 'followers') & (follow != 'following') & (follow != 'all')):
+        return 'followers? following? all?'
         
     if ((ids == None) & (follow=='followers')) :
         follow_ids=client.api.followers.ids.get(screen_name=screen_name)
         ids = follow_ids.data['ids']
         print('number of',follow,': ', len(ids))
-
     
     if ((ids == None) & (follow=='following')) :
         follow_ids=client.api.friends.ids.get(screen_name=screen_name)
         ids = follow_ids.data['ids']
         print('number of',follow,': ', len(ids))
+        
+    if ((ids == None) & (follow=='all')) :
+        following_ids=client.api.friends.ids.get(screen_name=screen_name)
+        followers_ids=client.api.followers.ids.get(screen_name=screen_name)
+        ids1 = following_ids.data['ids']
+        ids2 = followers_ids.data['ids']
+        ids = list(set(ids1+ids2))
+        target = client.api.users.show.get(screen_name=screen_name)
+        ids.append(target.data['id'])
+        print('number of',follow,': ', len(ids))    
 
     if not ids:
         print('done')
@@ -97,3 +106,4 @@ def getFollowTimelines(screen_name, file_name, follow, ids=None, num=1):
     
     num=num+1
     return getFollowTimelines(screen_name,file_name,follow,ids,num)
+
