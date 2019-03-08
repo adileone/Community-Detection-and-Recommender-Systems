@@ -2,14 +2,14 @@ import string
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem.porter import PorterStemmer
 import re
-
+            
 def replace_urls(in_string, replacement=None):
    
     replacement = '<-URL->' if replacement is None else replacement
     pattern = re.compile('(https?://)?(\w*[.]\w+)+([/?=&]+\w+)*')
     return re.sub(pattern, replacement, in_string)     
     
-def tokenize_and_stem(doc=None,stopwords=None):
+def tokenize_and_stem(doc,stopwords=None,stem=None):
     
     #split into words
     tokens = word_tokenize(doc)
@@ -27,8 +27,9 @@ def tokenize_and_stem(doc=None,stopwords=None):
     tokens = [replace_urls(w) for w in tokens]
     
     # stemming of words
-    porter = PorterStemmer()
-    tokens = [porter.stem(word) for word in tokens]
+    if stem!=None:
+    	porter = PorterStemmer()
+    	tokens = [porter.stem(word) for word in tokens]
     
     # stopping
     if stopwords!=None:
